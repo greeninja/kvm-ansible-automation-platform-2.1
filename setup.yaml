@@ -1,0 +1,41 @@
+---
+- name: Sample VM build
+  hosts: localhost
+  gather_facts: false
+  become: true
+  roles:
+    - packages
+    - networks
+    - cloud-image
+
+- name: VMs
+  hosts: all
+  gather_facts: false
+  become: true
+  roles:
+    - build-os
+    - build-disks
+    - cloud-init
+    - build-vms
+    - build-inv
+
+- name: Check dynamic inventory works
+  hosts: all
+  gather_facts: true
+  remote_user: root
+  tasks:
+    - name: Ping
+      ping:
+    - name: Register if RedHat
+      redhat_subscription:
+        state: present
+        username: "{{ rhn_user }}"
+        password: "{{ rhn_pass }}"
+        auto_attach: true
+      when: ansible_distribution == "RedHat"
+
+- name: Setup DB
+  hosts: db
+  gather_facts: true
+  roles:
+    - postgres-setup

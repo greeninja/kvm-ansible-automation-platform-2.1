@@ -1,0 +1,5 @@
+---
+kvm_addr: "qemu:///system"
+enable_spice: true
+rhn_user: ""
+rhn_pass: ""

@@ -1,0 +1,35 @@
+---
+all:
+  vars:
+    networks:
+      - name: aap2
+        subnet: 10.44.243.0/24
+        id: 1243
+        dnsname: aap2.local
+    kvm_host: 192.168.0.15
+    remote_cloud_image: https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
+    os_image: /var/lib/libvirt/images/iso/rhel-8.5-x86_64-kvm.qcow2
+    os_path: /var/lib/virt/nvme
+    os_image_size: 40G
+    ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILkHWxN2uZZK8in6yY6JnEKgHqkAJ8jysFU3Xuer8UTY"
+
+aap:
+  hosts:
+    controller01.aap2.local:
+    worker01.aap2.local:
+  vars:
+    interfaces:
+      - network: aap2
+    memory: 16
+    vcpus: 4
+    ansible_host: "{{ (lookup('file', inventory_dir + '/data.json') | from_json).get(inventory_hostname) }}"
+
+db:
+  hosts:
+    db.aap2.local:
+  vars:
+    interfaces:
+      - network: aap2
+    memory: 8
+    vcpus: 4
+    ansible_host: "{{ (lookup('file', inventory_dir + '/data.json') | from_json).get(inventory_hostname) }}"
